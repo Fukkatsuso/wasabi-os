@@ -2,13 +2,12 @@
 #![no_main]
 #![feature(offset_of)]
 
-use core::{
-    arch::asm,
-    cmp::min,
-    mem::{offset_of, size_of},
-    panic::PanicInfo,
-    ptr::null_mut,
-};
+use core::arch::asm;
+use core::cmp::min;
+use core::mem::offset_of;
+use core::mem::size_of;
+use core::panic::PanicInfo;
+use core::ptr::null_mut;
 
 type EfiVoid = u8;
 type EfiHandle = u64;
