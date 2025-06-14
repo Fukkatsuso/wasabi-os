@@ -136,6 +136,8 @@ fn efi_main(_image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
         draw_font_fg(&mut vram, i as i64 * 16 + 256, i as i64 * 16, 0xffffff, c)
     }
 
+    draw_str_fg(&mut vram, 256, 256, 0xffffff, "Hello, world!");
+
     // println!("Hello, world!");
     loop {
         hlt()
@@ -319,5 +321,11 @@ fn draw_font_fg<T: Bitmap>(buf: &mut T, x: i64, y: i64, color: u32, c: char) {
                 let _ = draw_point(buf, color, x + dx as i64, y + dy as i64);
             }
         }
+    }
+}
+
+fn draw_str_fg<T: Bitmap>(buf: &mut T, x: i64, y: i64, color: u32, s: &str) {
+    for (i, c) in s.chars().enumerate() {
+        draw_font_fg(buf, x + i as i64 * 8, y, color, c)
     }
 }
