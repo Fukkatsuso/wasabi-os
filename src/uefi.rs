@@ -120,7 +120,7 @@ impl<'a> Iterator for MemoryMapIterator<'a> {
 }
 
 #[repr(C)]
-pub struct EfiBootServiceTable {
+pub struct EfiBootServicesTable {
     _reserved0: [u64; 7],
     get_memory_map: extern "win64" fn(
         memory_map_size: *mut usize,
@@ -138,7 +138,7 @@ pub struct EfiBootServiceTable {
         interface: *mut *mut EfiVoid,
     ) -> EfiStatus,
 }
-impl EfiBootServiceTable {
+impl EfiBootServicesTable {
     pub fn get_memory_map(&self, map: &mut MemoryMapHolder) -> EfiStatus {
         (self.get_memory_map)(
             &mut map.memory_map_size,
@@ -149,18 +149,18 @@ impl EfiBootServiceTable {
         )
     }
 }
-const _: () = assert!(offset_of!(EfiBootServiceTable, get_memory_map) == 56);
-const _: () = assert!(offset_of!(EfiBootServiceTable, exit_boot_services) == 232);
-const _: () = assert!(offset_of!(EfiBootServiceTable, locate_protocol) == 320);
+const _: () = assert!(offset_of!(EfiBootServicesTable, get_memory_map) == 56);
+const _: () = assert!(offset_of!(EfiBootServicesTable, exit_boot_services) == 232);
+const _: () = assert!(offset_of!(EfiBootServicesTable, locate_protocol) == 320);
 
 #[repr(C)]
 pub struct EfiSystemTable {
     _reserved0: [u64; 12],
-    pub boot_services: &'static EfiBootServiceTable,
+    pub boot_services: &'static EfiBootServicesTable,
 }
 const _: () = assert!(offset_of!(EfiSystemTable, boot_services) == 96);
 impl EfiSystemTable {
-    pub fn boot_services(&self) -> &EfiBootServiceTable {
+    pub fn boot_services(&self) -> &EfiBootServicesTable {
         self.boot_services
     }
 }
