@@ -55,6 +55,7 @@ fn efi_main(image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
     draw_test_pattern(&mut vram);
 
     let mut w = VramTextWriter::new(&mut vram);
+    let acpi = efi_system_table.acpi_table().expect("ACPI table not found");
     let memory_map = init_basic_runtime(image_handle, efi_system_table);
     let mut total_memory_pages = 0;
     for e in memory_map.iter() {
@@ -102,7 +103,12 @@ fn efi_main(image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
     // OS によってページテーブルの原本が書き換えられたので、TLB の中身を消すことで再度反映させる
     flush_tlb();
 
-    let task1 = Task::new(async {
+    let hpet = acpi.hpet().expect("Failed to get HPET from ACPI");
+    let hpet = hpet
+        .base_address()
+        .expect("Failed to get HPET base address");
+    info!("HPET is at {hpet:#018X}");
+    let task1 = Task::new(async move {
         for i in 100..=103 {
             info!("{i}");
             yield_execution().await;
