@@ -878,3 +878,9 @@ pub fn trigger_debug_interrupt() {
 pub unsafe fn write_cr3(table: *const PML4) {
     asm!("mov cr3, rax", in("rax") table)
 }
+
+pub fn flush_tlb() {
+    unsafe {
+        write_cr3(read_cr3());
+    }
+}
